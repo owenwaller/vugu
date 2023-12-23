@@ -6,25 +6,36 @@ version: '3'
 
 # TODO: Warning this task file assumes Linux is the OS. The Taskfile will need to reworked to strip the Linux only shell cmds
 tasks:
-  # Build everything, run all the tests (using go, tinygo and tinygo in docker) and lint the codebase
+  # Generate the auto-generated code, build everything, run all the tests (using go, tinygo and tinygo in docker) and lint the codebase
   all:
     preconditions:
       - task: check-cmds-exist
     cmds:
       - task: clean-vgform
       - task: clean-wasm-test-suite
+      - task: generate
       - task: build
       - task: test
       - task: test-wasm
       - task: lint
 
 
+  # Generate or regenerate the generated files in the vgform package.
+  # If the generated files differ from what is already in the repo then it is the developers 
+  # responsibility to commit the updated generated files. The "source" files and hte generated
+  # file must be in sync at all times.
+  # This is not a prerequisite of the Build task because the "source" files that produce the generated files
+  # may not have changed from the versions in the repo.
+  generate:
+    cmds:
+      # we have to run go generate in the vgform package
+      - go generate github.com/vugu/vugu/vgform
+
+
   # Build the vugu packages and the vugugen and vugufmt commands
   build:
     cmds:
       # note we now use the full package names
-      # we have to run go generate in the vgform package
-      - go generate github.com/vugu/vugu/vgform
       # build and install the vugu package
       - go install github.com/vugu/vugu
       # build and install the vugugen command
