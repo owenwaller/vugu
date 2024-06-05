@@ -1,6 +1,6 @@
 module github.com/vugu/vugu/examples/fetch-and-display
 
-go 1.22.3
+go 1.22.4
 
 replace github.com/vugu/vugu => ../../
 

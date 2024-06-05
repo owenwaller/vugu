@@ -2,7 +2,7 @@ module github.com/vugu/vugu/wasm-test-suite/test-006-issue-81
 
 replace github.com/vugu/vugu => ../..
 
-go 1.22.3
+go 1.22.4
 
 require (
 	github.com/chromedp/cdproto v0.0.0-20240501202034-ef67d660e9fd

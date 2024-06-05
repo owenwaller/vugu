@@ -1,6 +1,6 @@
 module github.com/vugu/vugu/wasm-test-suite/test-024-event-buffer-size
 
-go 1.22.3
+go 1.22.4
 
 replace github.com/vugu/vugu => ../..
 
