@@ -71,6 +71,8 @@ func runGoGenerateInTestDirs() error {
 		if err != nil {
 			// it failed so produce a listing to help debug
 			sh.Run("ls", "-al")
+			// cat the go.mod to see wht module we are in
+			sh.Run("cat", "go.mod")
 		}
 		return err
 	}
