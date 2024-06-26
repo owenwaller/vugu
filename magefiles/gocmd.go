@@ -65,7 +65,14 @@ func testLegacyWasmTestSuite() error {
 
 func runGoGenerateInTestDirs() error {
 	f := func() error {
-		return goCmdV("generate") // run in src dir
+		dir, _ := os.Getwd()
+		log.Printf("Running go generte in %q", dir)
+		err := goCmdV("generate") // run in src dir
+		if err != nil {
+			// it failed so produce a listing to help debug
+			sh.Run("ls", "-al")
+		}
+		return err
 	}
 	return runFuncInDir(WasmTestSuiteDir, f)
 }
