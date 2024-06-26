@@ -73,8 +73,13 @@ func runGoGenerateInTestDirs() error {
 		if err != nil {
 			return err
 		}
+		// echo the path to see if vugugens location is on it
+		err = sh.Run("echo", "$PATH")
+		if err != nil {
+			return err
+		}
 		// call vugugen directly
-		err := sh.Run("vugugen", "-s")
+		err = sh.Run("vugugen", "-s")
 		if err != nil {
 			// it failed so produce a listing to help debug
 			sh.Run("ls", "-al")
