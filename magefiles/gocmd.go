@@ -84,7 +84,12 @@ func runGoGenerateInTestDirs() error {
 			return err
 		}
 		// call vugugen directly
-		err = sh.Run("vugugen", "-s")
+		envs := map[string]string{
+			"GOOS":   "js",
+			"GOARCH": "wasm",
+		}
+
+		err = goCmdWithV(envs, "generate")
 		if err != nil {
 			// it failed so produce a listing to help debug
 			sh.Run("ls", "-al")
