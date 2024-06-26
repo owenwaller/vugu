@@ -68,13 +68,18 @@ func runGoGenerateInTestDirs() error {
 		dir, _ := os.Getwd()
 		log.Printf("Running go generte in %q", dir)
 		//err := goCmdV("generate") // run in src dir
-		// where is vugugen
-		err := sh.Run("command", "-v", "vugugen")
+		// echo the path to see if vugugens location is on it
+		err := sh.Run("echo", "$PATH")
 		if err != nil {
 			return err
 		}
-		// echo the path to see if vugugens location is on it
-		err = sh.Run("echo", "$PATH")
+		// which shell do we have?
+		err = sh.Run("echo", "$SHELL")
+		if err != nil {
+			return err
+		}
+		// where is vugugen
+		err = sh.Run("which", "vugugen")
 		if err != nil {
 			return err
 		}
