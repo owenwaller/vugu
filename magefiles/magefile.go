@@ -162,7 +162,7 @@ func testWasm(withGeneratedFilesCheck bool) error {
 		return err
 	}
 
-	// loop ove reach module dir
+	// loop over each module dir
 	for _, module := range modules {
 		err = buildAndTestModule(module, withGeneratedFilesCheck)
 		if err != nil {
@@ -385,7 +385,7 @@ func examples(withGeneratedFilesCheck bool) error {
 	if err != nil {
 		return err
 	}
-	// loop ove reach module dir
+	// loop over each module dir
 	for _, module := range modules {
 		// build the wasm binary
 		err = buildModule(module, withGeneratedFilesCheck)
@@ -539,11 +539,11 @@ func TestLegacyWasm() error {
 // Update all of the dependencies by running "go get -u -t <module-name> for every module - the root vugu module, the wasm-test-suite modules and the example modules"
 func UpgradeAllDependencies() error {
 	mg.SerialDeps(UpgradeRootDependencies, UpgradeWasmTestSuiteDependencies, UpgradeExampleDependencies)
-	modules, err := modulesUnderDir("./") // we want to run this in the vugu module root - path MUST tbe relative ofr moduleUnderDir to resolve it correctly
+	modules, err := modulesUnderDir("./") // we want to run this in the vugu module root - path MUST tbe relative for moduleUnderDir to resolve it correctly
 	if err != nil {
 		return err
 	}
-	// loop ove reach module dir
+	// loop over each module dir
 	for _, module := range modules {
 		// build the wasm binary
 		err = updateModuleDependencies(module)

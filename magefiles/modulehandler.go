@@ -25,10 +25,15 @@ func upgradeModuleDependencies(dir string) error {
 	if err != nil {
 		return err
 	}
-	// loop ove reach module dir
+	// loop over each module dir
 	for _, module := range modules {
 		// build the wasm binary
 		err = updateModuleDependencies(module)
+		if err != nil {
+			return err
+		}
+		// now re-run go mod tidy to clean up any (now) unused old module references
+		err = runGoModTidyInModuleDir(module)
 		if err != nil {
 			return err
 		}
