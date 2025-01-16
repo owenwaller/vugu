@@ -1,0 +1,12 @@
+<!-- This is the HTML form with all of the sub components -->
+<!-- When the submit event occurs we call the 'Submit' method on the 'Simpleform struct'  -->
+<form  @submit='c.Submit(event)'>
+    <!-- Add a select from a static list -->
+    <main:Staticselect :Form='c'></main:StaticSelect>
+    <!-- Add a select from a dynamically generated list -->
+    <main:Dynamicselect :Form='c'></main:Dynamicselect>
+    <!-- Use a cg-template to generat the list of options -->
+    <main:Templateselect :Form='c'></main:Templateselect>
+    <!-- Add the "Submit" button to the form -->
+    <input type=submit value="Submit Form"></input>
+</form>

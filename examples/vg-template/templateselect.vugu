@@ -1,0 +1,23 @@
+<!-- A templated select control that contains a random number of options, each of which is a random number -->
+<div id=randomnumbers>
+    <div >
+        <label for="randomnumbers">Choose a number:</label>
+        <!-- In this case 'c' is the instance of the Emailinput component. -->
+        <!-- When the value changes we call the 'Change' method to read the new value -->
+        <select name="randomnumbers" id="randomnumbers" @change='c.Change(event)'>
+        <div id="failure">
+            <!-- uncomment these three lines to see the failure - see below... -->
+            <vg-template vg-for='j:=0; j<c.NumberOfOptions(); j++'>
+                <option :value='fmt.Sprintf("%d", j)' vg-content='c.Random(j)'></option>
+            </vg-template>
+        </div>
+        </select> 
+    </div>
+    <p>Printing the list as normal...</p><br>
+    <div id="works">
+        <!-- this works as expected -->
+        <!-- <vg-template vg-for='j:=0; j<c.NumberOfOptions(); j++'> -->
+            <!-- <p vg-content='fmt.Sprintf("[%d]=%d", j, c.Random(j))'></p> -->
+        <!-- </vg-template> -->
+    </div>
+</div>
