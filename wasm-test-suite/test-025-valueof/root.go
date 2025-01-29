@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	sysjs "syscall/js"
 	"time"
 
 	js "github.com/vugu/vugu/js"
@@ -13,7 +14,8 @@ type Root struct {
 // Make a vugu.js.ValueOf call on an object derived from a JS global object - in this case the global "Date" object.
 // Returns the string "Ok" or a panic message
 // See Issue #328 https://github.com/vugu/vugu/issues/328
-func (c *Root) ValueOf() (s string) {
+// vugu/js version
+func (c *Root) VuguJsValueOf() (s string) {
 	// We have to be a little clever here
 	// We need to recover from the panic but change the value we return.
 	// The simplest way to achieve this is with a named return value.
@@ -24,12 +26,24 @@ func (c *Root) ValueOf() (s string) {
 			s = fmt.Sprintf("%s", r) // set the names return value to the panic string
 		}
 	}()
-	c.panicingFunc()
+	c.vuguJsPanicingFunc()
+	return "Ok"
+}
+
+// Syscall/js version of VuguJsValueOf
+func (c *Root) SyscallJsValueOf() (s string) {
+	defer func() {
+		if r := recover(); r != nil {
+			s = fmt.Sprintf("%s", r) // set the names return value to the panic string
+		}
+	}()
+	c.syscallJsPanicingFunc()
 	return "Ok"
 }
 
 // panicingFunc makes the vugu.js.ValueOf call that rill result in a panic
-func (c *Root) panicingFunc() {
+// vugu/js version
+func (c *Root) vuguJsPanicingFunc() {
 	date := js.Global().Get("Date") // NOTE: use of double quotes not single quotes as in Issue #328 https://github.com/vugu/vugu/issues/328
 	timeEndValue := date.New(time.Now().UnixMilli())
 	// This line with panic with:
@@ -43,4 +57,12 @@ func (c *Root) panicingFunc() {
 	// The internal implementation of syscall.js.ValueOf consists of a type switch statement i.e. `switch x := x.(type)`
 	// and since a vugu.js.Value is not one of the listed types the syscall.js.ValueOf we reach the default case which panics.
 	js.ValueOf(timeEndValue)
+}
+
+// syscall/js version of panicingFunc
+func (c *Root) syscallJsPanicingFunc() {
+	date := sysjs.Global().Get("Date") // NOTE: use of double quotes not single quotes as in Issue #328 https://github.com/vugu/vugu/issues/328
+	timeEndValue := date.New(time.Now().UnixMilli())
+	// This should not panic as it calls syscall.js.ValueOf directly with a parameter with an underlying type of syscall.js.Value
+	sysjs.ValueOf(timeEndValue)
 }

@@ -24,9 +24,13 @@ func (c *Root) Build(vgin *vugu.BuildIn) (vgout *vugu.BuildOut) {
 		_ = vgparent
 		vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
 		vgparent.AppendChild(vgn)
-		vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{{Namespace: "", Key: "id", Val: "t1"}}}
+		vgn = &vugu.VGNode{Type: vugu.VGNodeType(3), Namespace: "", Data: "div", Attr: []vugu.VGAttribute{{Namespace: "", Key: "id", Val: "vugu_js"}}}
 		vgparent.AppendChild(vgn)
-		vgn.SetInnerHTML(c.ValueOf())
+		vgn.SetInnerHTML(c.VuguJsValueOf())
+		vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n            "}
+		vgparent.AppendChild(vgn)
+		vgn = &vugu.VGNode{Type: vugu.VGNodeType(4), Data: " <div id=\"syscall_js\" vg-content='c.SyscallJsValueOf()'></div> "}
+		vgparent.AppendChild(vgn)
 		vgn = &vugu.VGNode{Type: vugu.VGNodeType(1), Data: "\n        "}
 		vgparent.AppendChild(vgn)
 	}
