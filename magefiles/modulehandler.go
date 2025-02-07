@@ -5,6 +5,7 @@ package main
 import (
 	"bufio"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -18,6 +19,10 @@ func buildAndTestModule(module moduleData, withGeneratedFileCheck bool) error {
 
 func buildModule(module moduleData, withGeneratedFileCheck bool) error {
 	return doBuildAndTestModule(module, false, withGeneratedFileCheck)
+}
+
+func testModule(module moduleData, withGeneratedFileCheck bool) error {
+	return doTestModule(module, withGeneratedFileCheck)
 }
 
 func upgradeModuleDependencies(dir string) error {
@@ -71,6 +76,27 @@ func doBuildAndTestModule(module moduleData, withTests bool, withGeneratedFileCh
 		if err != nil {
 			return err
 		}
+	}
+	return err
+}
+
+func doTestModule(module moduleData, withGeneratedFileCheck bool) error {
+	err := runGoModTidyInModuleDir(module)
+	if err != nil {
+		return err
+	}
+
+	if withGeneratedFileCheck {
+		// sanity check that we have what we expect
+		err = runGitDiffFilesInModuleDir(module)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = runGoTestInModuleDir(module)
+	if err != nil {
+		return err
 	}
 	return err
 }
@@ -180,36 +206,34 @@ func modulesUnderDir(dir string) ([]moduleData, error) {
 		return nil, err
 	}
 
-	// find all the directories under dir - dir is absolute at this point
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return nil, err
-	}
-	for _, e := range entries {
+	walkDirFunc := func(path string, d fs.DirEntry, err error) error {
 		// skip any files
-		if !e.IsDir() {
-			continue
+		if !d.IsDir() {
+			return nil
 		}
-		if strings.Contains(e.Name(), MagefilesDir) {
-			continue // ignore the magefiles directory
+		if strings.Contains(d.Name(), MagefilesDir) {
+			return filepath.SkipDir // ignore the magefiles directory
 		}
-		subdir, err := resolveDirToAbs(dir, e.Name())
+
+		cwd, err := os.Getwd()
+		// ensure we always cd back to teh current directory. The rest of the magefile depends on this.
+		defer func() {
+			_ = os.Chdir(cwd)
+		}()
+		// cd into teh dir we have found. It might be a module, we don;t know yet.
+		err = os.Chdir(path)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		// CDW into the absolute subdir
-		err = os.Chdir(subdir)
-		if err != nil {
-			return nil, nil
-		}
+		// use `go list` to determine if the current dir contains a module or not.
 		// seems we need to call go list -m twice - once to get the module name (i.e. Path) and once to get the source code dir
 		moduleName, err := goCmdCaptureOutput("list", "-m", "-f", "{{.Path}}") // we only want to module path i.e. no replacement info required. This returns a single line
 		if err != nil {
-			return nil, err
+			return err
 		}
 		moduleDir, err := goCmdCaptureOutput("list", "-m", "-f", "{{.Dir}}") // we only want to module directory where the source code is located. This returns a single line
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		moduleName = strings.TrimSpace(moduleName)
@@ -219,13 +243,19 @@ func modulesUnderDir(dir string) ([]moduleData, error) {
 		// module that contains the subdir.
 		// We use a map to deduplicate the module entries
 		moduleDataMap[moduleName] = moduleDir
+		return nil
 	}
+
+	// find all the directories under dir - dir is absolute at this point
+	err = filepath.WalkDir(dir, walkDirFunc)
+	if err != nil {
+		return nil, err
+	}
+
 	// now we hae a map, convert it to a slice of moduleData, as that's what the rest of the code expects
 	for k, v := range moduleDataMap {
 		moduledata = append(moduledata, moduleData{name: k, dir: v})
-		if err != nil {
-			return nil, err
-		}
+
 	}
 	return moduledata, nil
 }

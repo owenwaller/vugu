@@ -14,7 +14,7 @@ import (
 
 func Test002Click(t *testing.T) {
 
-	pkgName := pkg.PkgName(t)
+	pkgName := pkg.PkgNameOfTest(t)
 	tmpl.CreateIndexHtml(t, pkgName)
 
 	assert := assert.New(t)

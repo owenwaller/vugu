@@ -30,3 +30,5 @@ const GoRoot = "GOROOT" // GOROOT env var name
 const WasmExecJSPathMiscDir = "misc"
 const WasmExecJSPathWasmDir = "wasm"
 const WasmExecJS = "wasm_exec.js"
+
+const TestDriverModuleExtension = "testdriver"

@@ -222,24 +222,48 @@ func testSingleWasmTest(moduleName string, withGeneratedFilesCheck bool) error {
 		return err
 	}
 
-	// filter the list to find the module we want - there should only be one
-	module := moduleData{}
-	found := false
+	// filter the list to find the module we want
+	// we are looking for two modules one called "module-name" and one called "module-name/testdriver"
+	// the "testdriver" module will be in a sub-dir of the code that has to be tested.
+
+	// form teh testdriver module name we expect to find
+	testDriverModuleName := moduleName + "/" + TestDriverModuleExtension
+	wasmModule := "wasm_module"
+	testdriverModule := "test_driver_module"
+	modules := make(map[string]moduleData, 2)
+	found := 0
 	for _, nthModule := range allmodules {
 		if nthModule.name == moduleName {
-			module = nthModule
-			found = true
-			break // we have found theone we want
+			modules[wasmModule] = nthModule
+			found++
+			continue // we have found the wasm module
+		}
+		if nthModule.name == testDriverModuleName {
+			modules[testdriverModule] = nthModule
+			found++
+			continue // we have found the testdriver module
+		}
+		if found == 2 {
+			break // break early if we have found both modules
 		}
 	}
-	if !found {
-		return fmt.Errorf("Could not find a module named %q", moduleName)
+	if found == 0 {
+		return fmt.Errorf("Could not find a module named %q or it's testdriver module %q", moduleName, testDriverModuleName)
+	}
+	if found == 1 {
+		if modules[wasmModule].name == "" {
+			return fmt.Errorf("Could not find a module named %q", moduleName)
+		}
+		if modules[testdriverModule].name == "" {
+			return fmt.Errorf("Could not find a testdriver module %q", testDriverModuleName)
+		}
 	}
 	// no need to loop as there is only one module found be the loop above
-	err = buildAndTestModule(module, withGeneratedFilesCheck)
+	err = buildModule(modules[wasmModule], withGeneratedFilesCheck)
 	if err != nil {
 		return err
 	}
+	err = testModule(modules[testdriverModule], withGeneratedFilesCheck)
 
 	// cleanup via the deferred functions
 	return err // err must be nil at this point
