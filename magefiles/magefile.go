@@ -122,7 +122,7 @@ func Build() error {
 	if err != nil {
 		return err
 	}
-	err = goBuildWithSetVariable("github.com/vugu/vugu/cmd/vugu/version.version", version, "./cmd/vugu/vugu", "github.com/vugu/vugu/cmd/vugu")
+	err = goInstallWithSetVariable("github.com/vugu/vugu/cmd/vugu/version.version", version, "github.com/vugu/vugu/cmd/vugu")
 	if err != nil {
 		return err
 	}
