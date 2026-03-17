@@ -17,10 +17,10 @@ jobs:
     env:
       GO111MODULE: "on"
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Set up Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v6
       with:
         go-version: '${{ matrix.go }}'
 
@@ -36,5 +36,5 @@ jobs:
     - name: Print mage version
       run: mage --version
 
-    - name: Build and test vugu including the legecy wasm test suite
+    - name: Build and test vugu including the legacy wasm test suite
       run: mage -v AllGithubAction
