@@ -136,7 +136,12 @@ func connectContainerToHostNetwork(containerName string) error {
 }
 
 func startChromeDpContainer() error {
-	return dockerCmdV("run", "-d", "-t", "-p", "9222:9222", "--name", VuguChromeDpContainerName, "--network", VuguContainerNetworkName, "chromedp/headless-shell")
+	// increase the size of the containers shared memory device to try to avoid the
+	// "page load error net::ERR_INSUFFICIENT_RESOURCES" error that chrome (from its headless container) is reporting.
+	// The default is 64Meg, so increase it to 256 meg.
+	// This problem also appear to be the case of the wasm test timeouts that have been occurring
+	// from: https://stackoverflow.com/questions/30210362/how-to-increase-the-size-of-the-dev-shm-in-docker-container
+	return dockerCmdV("run", "-d", "-t", "-p", "9222:9222", "--shm-size", "256m", "--name", VuguChromeDpContainerName, "--network", VuguContainerNetworkName, "chromedp/headless-shell")
 }
 
 func dockerCmdV(args ...string) error {
