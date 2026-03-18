@@ -14,6 +14,8 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
+const maxWasmTestTime = 1 * time.Minute // max timeout per test.
+
 func Must(err error) {
 	if err != nil {
 		panic(err)
@@ -43,7 +45,7 @@ func MustChromeCtx() (context.Context, context.CancelFunc) {
 
 	ctx, _ := chromedp.NewContext(allocCtx) // , chromedp.WithLogf(log.Printf))
 	// defer cancel()
-	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, maxWasmTestTime)
 	// defer cancel()
 
 	return ctx, cancel
