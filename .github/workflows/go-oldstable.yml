@@ -45,6 +45,5 @@ jobs:
       run: mage --version
 
     - name: Build and test vugu including the legacy wasm test suite
-      run: mage -v AllGithubAction
       timeout-minutes: 30 # the entire mage build inc. all the wasm tests must complete in 30 minutes.
       run: mage -v AllGithubAction
