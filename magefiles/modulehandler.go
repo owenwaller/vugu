@@ -77,7 +77,7 @@ func doBuildAndTestModule(module moduleData, withTests bool, withGeneratedFileCh
 
 func runVugugenInModuleDir(module moduleData) error {
 	f := func() error {
-		return sh.RunV("vugugen") // run in src dir
+		return sh.RunV("vugu", "gen") // run in src dir
 	}
 	return runFuncIn(module, f)
 }
