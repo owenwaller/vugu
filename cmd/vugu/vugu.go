@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/urfave/cli/v3"
+	"github.com/vugu/vugu/cmd/vugu/gen"
 	"github.com/vugu/vugu/cmd/vugu/version"
 )
 
@@ -45,13 +46,44 @@ func main() {
 				Usage:   "Display the version number",
 				Action:  version.Version,
 			},
-			// the future gen sub command, that should do the same as `vugugen` does currently
-			// {
-			// 	Name:    "gen",
-			// 	Aliases: []string{"g"},
-			// 	Usage:   "Generate code",
-			// 	Action:  version.Version,
-			// },
+			{
+				Name:    "gen",
+				Aliases: []string{"g"},
+				Usage:   "Generate code",
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:        "skip-go-mod",
+						Value:       false,
+						Usage:       "Do not try to create go.mod as needed",
+						Destination: &gen.Opts.SkipGoMod,
+					},
+					&cli.BoolFlag{
+						Name:        "skip-main",
+						Value:       false,
+						Usage:       "Donot try to create main.go as needed",
+						Destination: &gen.Opts.SkipMainGo,
+					},
+					&cli.BoolFlag{
+						Name:        "tinygo",
+						Value:       false,
+						Usage:       "Generate code intended for compilation under Tinygo",
+						Destination: &gen.Opts.TinyGo,
+					},
+					&cli.BoolFlag{
+						Name:        "s",
+						Value:       false,
+						Usage:       "Merge generated code for a package into a single file",
+						Destination: &gen.Opts.MergeSingle,
+					},
+					&cli.BoolFlag{
+						Name:        "r",
+						Value:       false,
+						Usage:       "Run recursively on specified path and subdirectories.",
+						Destination: &gen.Recursive,
+					},
+				},
+				Action: gen.Gen,
+			},
 			// Add other command here e.g. init, possibly with their own sub commands as shown in the comments
 			// 	{
 			// 		Name:    "init",
