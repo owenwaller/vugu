@@ -68,7 +68,6 @@ func TestMerge(t *testing.T) {
 	}
 
 	for _, tc := range tcList {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 
 			tmpDir, err := os.MkdirTemp("", "TestMerge")
