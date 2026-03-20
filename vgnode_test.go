@@ -26,7 +26,7 @@ func BenchmarkAlloc(b *testing.B) {
 
 }
 
-var vgnodePool = sync.Pool{New: func() interface{} { return &VGNode{} }}
+var vgnodePool = sync.Pool{New: func() any { return &VGNode{} }}
 
 func BenchmarkPool(b *testing.B) {
 

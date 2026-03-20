@@ -77,7 +77,7 @@ type VGNode struct {
 	DOMEventHandlerSpecList []DOMEventHandlerSpec // describes invocations when DOM events happen
 
 	// indicates this node's output should be delegated to the specified component
-	Component interface{}
+	Component any
 
 	// if not-nil, called when element is created (but before examining child nodes)
 	JSCreateHandler JSValueHandler
@@ -209,7 +209,7 @@ func (n *VGNode) Walk(f func(*VGNode) error) error {
 // - fmt.Stringer - if the value implements fmt.Stringer, the returned string of StringVar() is used
 // - ptr - If the ptr is nil, the attribute will be ignored. Else, the rules above apply
 // any other type is handled via fmt.Sprintf()
-func (n *VGNode) AddAttrInterface(key string, val interface{}) {
+func (n *VGNode) AddAttrInterface(key string, val any) {
 	// ignore nil attributes
 	if val == nil {
 		return
@@ -255,14 +255,14 @@ func (n *VGNode) AddAttrInterface(key string, val interface{}) {
 		nattr.Val = key
 	case fmt.Stringer:
 		// we have to check that the given interface does not hide a nil ptr
-		if p := reflect.ValueOf(val); p.Kind() == reflect.Ptr && p.IsNil() {
+		if p := reflect.ValueOf(val); p.Kind() == reflect.Pointer && p.IsNil() {
 			return
 		}
 		nattr.Val = v.String()
 	default:
 		// check if this is a ptr
 		rv := reflect.ValueOf(val)
-		if rv.Kind() == reflect.Ptr {
+		if rv.Kind() == reflect.Pointer {
 			if rv.IsNil() {
 				return
 			}
@@ -295,7 +295,7 @@ func (n *VGNode) AddAttrList(lister VGAttributeLister) {
 //
 // All other values have undefined behavior but are currently handled by setting InnerHTML
 // to the result of: `html.EscapeString(fmt.Sprintf("%v", val))`
-func (n *VGNode) SetInnerHTML(val interface{}) {
+func (n *VGNode) SetInnerHTML(val any) {
 
 	var s string
 
@@ -343,7 +343,7 @@ func (n *VGNode) SetInnerHTML(val interface{}) {
 
 	case fmt.Stringer:
 		// we have to check that the given interface does not hide a nil ptr
-		if p := reflect.ValueOf(val); p.Kind() == reflect.Ptr && p.IsNil() {
+		if p := reflect.ValueOf(val); p.Kind() == reflect.Pointer && p.IsNil() {
 			n.InnerHTML = nil
 			return
 		}
@@ -352,7 +352,7 @@ func (n *VGNode) SetInnerHTML(val interface{}) {
 		// check if this is a ptr
 		rv := reflect.ValueOf(val)
 
-		if rv.Kind() == reflect.Ptr {
+		if rv.Kind() == reflect.Pointer {
 			if rv.IsNil() {
 				return
 			}

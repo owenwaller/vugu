@@ -15,7 +15,7 @@ func TestCompKey(t *testing.T) {
 	log.Printf("id=%#v", id)
 
 	m := make(map[CompKey]bool, 5000)
-	for i := 0; i < 5000; i++ {
+	for range 5000 {
 		ck := CompKey{ID: MakeCompKeyIDNowRand()}
 		if m[ck] {
 			t.Logf("CompKey %#v found duplicate", ck)

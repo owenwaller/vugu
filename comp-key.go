@@ -1,7 +1,7 @@
 package vugu
 
 import (
-	"math/rand"
+	"math/rand/v2"
 	"time"
 
 	"github.com/vugu/xxhash"
@@ -26,13 +26,10 @@ func MakeCompKeyIDTimeHash(t time.Time, b []byte) uint64 {
 
 var compKeyRand *rand.Rand
 
-// MakeCompKeyIDNowRand generates a value for CompKey.ID based on the current unix timestamp in seconds for the top 32 bits and
-// the bottom 32 bits populated from a random source
+// MakeCompKeyIDNowRand generates a value for CompKey.ID using the newer v2 version of the math/rand package
 func MakeCompKeyIDNowRand() uint64 {
 	if compKeyRand == nil {
-		compKeyRand = rand.New(rand.NewSource(time.Now().UnixNano()))
+		compKeyRand = rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), uint64(time.Now().UnixNano())))
 	}
-	var ret = uint64(time.Now().Unix()) << 32
-	ret |= uint64(compKeyRand.Int63() & 0xFFFFFFFF)
-	return ret
+	return compKeyRand.Uint64()
 }

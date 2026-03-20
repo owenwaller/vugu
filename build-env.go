@@ -56,7 +56,7 @@ type BuildResults struct {
 }
 
 // ResultFor is alias for indexing into AllOut.
-func (r *BuildResults) ResultFor(component interface{}) *BuildOut {
+func (r *BuildResults) ResultFor(component any) *BuildOut {
 	return r.allOut[makeBuildCacheKey(component)]
 }
 

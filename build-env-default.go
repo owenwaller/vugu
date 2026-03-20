@@ -1,7 +1,7 @@
 package vugu
 
-type buildCacheKey interface{}
+type buildCacheKey any
 
-func makeBuildCacheKey(v interface{}) buildCacheKey {
+func makeBuildCacheKey(v any) buildCacheKey {
 	return v
 }

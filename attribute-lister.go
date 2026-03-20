@@ -15,7 +15,7 @@ func (f VGAttributeListerFunc) AttributeList() []VGAttribute {
 }
 
 // AttrMap implements VGAttributeLister as a map[string]interface{}
-type AttrMap map[string]interface{}
+type AttrMap map[string]any
 
 // AttributeList returns an attribute list corresponding to this map using the rules from VGNode.AddAttrInterface.
 func (m AttrMap) AttributeList() (ret []VGAttribute) {
