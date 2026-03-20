@@ -301,7 +301,7 @@ func main() {
 			if err != nil {
 				return err
 			}
-			err = t.Execute(&buf, map[string]interface{}{
+			err = t.Execute(&buf, map[string]any{
 				"Parser":     p,
 				"NamesFound": namesFound,
 			})
@@ -494,9 +494,9 @@ checkMore:
 
 // goPkgCheckNames parses a package dir and looks for names, returning a map of what was
 // found.  Names like "A.B" mean a method of name "B" with receiver of type "*A"
-func goPkgCheckNames(pkgPath string, names []string) (map[string]interface{}, error) {
+func goPkgCheckNames(pkgPath string, names []string) (map[string]any, error) {
 
-	ret := make(map[string]interface{})
+	ret := make(map[string]any)
 
 	fset := token.NewFileSet()
 	pkgs, err := parser.ParseDir(fset, pkgPath, nil, 0)
