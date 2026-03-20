@@ -44,7 +44,7 @@ type rendered1 interface {
 	Rendered(ctx vugu.RenderedCtx)
 }
 
-func invokeRendered(c interface{}, rctx *renderedCtx) {
+func invokeRendered(c any, rctx *renderedCtx) {
 	if i, ok := c.(rendered0); ok {
 		i.Rendered()
 	} else if i, ok := c.(rendered1); ok {

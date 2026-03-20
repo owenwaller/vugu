@@ -90,7 +90,7 @@ type instructionList struct {
 
 var errDoesNotFit = errors.New("requested instruction does not fit in the buffer")
 
-func (il *instructionList) logf(f string, args ...interface{}) error {
+func (il *instructionList) logf(f string, args ...any) error {
 	if il.logWriter == nil {
 		return nil
 	}

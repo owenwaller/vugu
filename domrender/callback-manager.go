@@ -77,7 +77,7 @@ func (cm *callbackManager) addCreateAndPopulateHandlers(create, populate vugu.JS
 }
 
 // callback is call when we get a callback from the render script
-func (cm *callbackManager) callback(this js.Value, args []js.Value) interface{} {
+func (cm *callbackManager) callback(this js.Value, args []js.Value) any {
 
 	if len(args) < 1 {
 		panic(fmt.Errorf("no args passed to callbackManager.callback"))
