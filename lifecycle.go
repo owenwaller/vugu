@@ -29,7 +29,7 @@ type initer1 interface {
 	Init(ctx InitCtx)
 }
 
-func invokeInit(c interface{}, eventEnv EventEnv) {
+func invokeInit(c any, eventEnv EventEnv) {
 	if i, ok := c.(initer0); ok {
 		i.Init()
 	} else if i, ok := c.(initer1); ok {
@@ -58,7 +58,7 @@ type computer1 interface {
 	Compute(ctx ComputeCtx)
 }
 
-func invokeCompute(c interface{}, eventEnv EventEnv) {
+func invokeCompute(c any, eventEnv EventEnv) {
 	if i, ok := c.(computer0); ok {
 		i.Compute()
 	} else if i, ok := c.(computer1); ok {
@@ -87,7 +87,7 @@ type destroyer1 interface {
 	Destroy(ctx DestroyCtx)
 }
 
-func invokeDestroy(c interface{}, eventEnv EventEnv) {
+func invokeDestroy(c any, eventEnv EventEnv) {
 	if i, ok := c.(destroyer0); ok {
 		i.Destroy()
 	} else if i, ok := c.(destroyer1); ok {

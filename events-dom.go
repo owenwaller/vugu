@@ -7,7 +7,7 @@ import (
 )
 
 // NewDOMEvent returns a new initialized DOMEvent.
-func NewDOMEvent(eventEnv EventEnv, eventSummary map[string]interface{}) DOMEvent {
+func NewDOMEvent(eventEnv EventEnv, eventSummary map[string]any) DOMEvent {
 	return &domEvent{
 		eventSummary: eventSummary,
 		eventEnv:     eventEnv,
@@ -25,7 +25,7 @@ type DOMEvent interface {
 	// e.Prop("target", "name") will return the same value as e.EventSummary()["target"]["name"],
 	// except that Prop helps with some edge cases and if a value is missing
 	// of the wrong type, nil will be returned, instead of panicing.
-	Prop(keys ...string) interface{}
+	Prop(keys ...string) any
 
 	// PropString is like Prop but returns it's value as a string.
 	// No type conversion is done, if the requested value is not
@@ -47,7 +47,7 @@ type DOMEvent interface {
 	// penalty, whereas calls to JSEvent, JSEventTarget, etc. require a call into the browser
 	// JS engine and the attendant resource usage.  So if you can get the information you
 	// need from the EventSummary, that's better.
-	EventSummary() map[string]interface{}
+	EventSummary() map[string]any
 
 	// JSEvent returns a js.Value in wasm that corresponds to the event object.
 	// Non-wasm implementation returns nil.
@@ -79,7 +79,7 @@ type DOMEvent interface {
 // DOM events and component events similar and consistent.
 // It might actually makes sense to move this into the domrender package at some point.
 type domEvent struct {
-	eventSummary map[string]interface{}
+	eventSummary map[string]any
 
 	eventEnv EventEnv // from the renderer
 
@@ -94,15 +94,15 @@ var _ DOMEvent = &domEvent{} // assert domEvent implements DOMEvent
 // e.Prop("target", "name") will return the same value as e.EventSummary()["target"]["name"],
 // except that Prop helps with some edge cases and if a value is missing
 // of the wrong type, nil will be returned, instead of panicing.
-func (e *domEvent) Prop(keys ...string) interface{} {
+func (e *domEvent) Prop(keys ...string) any {
 
-	var ret interface{}
+	var ret any
 	ret = e.eventSummary
 
 	for _, key := range keys {
 
 		// see if ret is a map
-		m, _ := ret.(map[string]interface{})
+		m, _ := ret.(map[string]any)
 		if m == nil {
 			return nil
 		}
@@ -144,7 +144,7 @@ func (e *domEvent) PropBool(keys ...string) bool {
 // penalty, whereas calls to JSEvent, JSEventTarget, etc. require a call into the browser
 // JS engine and the attendant resource usage.  So if you can get the information you
 // need from the EventSummary, that's better.
-func (e *domEvent) EventSummary() map[string]interface{} {
+func (e *domEvent) EventSummary() map[string]any {
 	return e.eventSummary
 }
 

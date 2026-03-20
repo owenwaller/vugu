@@ -13,7 +13,7 @@ func (c *ChangeCounter) Changed() {
 }
 
 // ModCheck implements the ModChecker interface.
-func (c *ChangeCounter) ModCheck(mt *ModTracker, oldData interface{}) (isModified bool, newData interface{}) {
+func (c *ChangeCounter) ModCheck(mt *ModTracker, oldData any) (isModified bool, newData any) {
 	oldn, ok := oldData.(ChangeCounter)
 	return (!ok) || (oldn != *c), *c
 }

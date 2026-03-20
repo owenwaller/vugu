@@ -10,7 +10,7 @@ package vugu
 // counter or other value can be used to indicate that some changed is occured, with the rest of the
 // application using mutator methods to increment this value upon change.
 type ModChecker interface {
-	ModCheck(mt *ModTracker, oldData interface{}) (isModified bool, newData interface{})
+	ModCheck(mt *ModTracker, oldData any) (isModified bool, newData any)
 }
 
 // NewModTracker creates an empty ModTracker, calls TrackNext on it, and returns it.
@@ -22,5 +22,5 @@ func NewModTracker() *ModTracker {
 
 type mtResult struct {
 	modified bool
-	data     interface{}
+	data     any
 }
