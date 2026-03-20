@@ -63,7 +63,7 @@ func New(mountPointSelector string) (*JSRenderer, error) {
 	ret.eventHandlerBuffer = make([]byte, 16384)
 	// ret.eventHandlerTypedArray = js.TypedArrayOf(ret.eventHandlerBuffer)
 
-	ret.eventHandlerFunc = js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	ret.eventHandlerFunc = js.FuncOf(func(this js.Value, args []js.Value) any {
 		if len(args) != 1 {
 			panic(fmt.Errorf("eventHandlerFunc got arg slice not exactly 1 element in length: %#v", args))
 		}
@@ -138,7 +138,7 @@ type JSRenderer struct {
 	jsRenderState *jsRenderState
 
 	// manages the Rendered lifecycle callback stuff
-	lifecycleStateMap map[interface{}]lifecycleState
+	lifecycleStateMap map[any]lifecycleState
 	lifecyclePassNum  uint8
 }
 
@@ -269,7 +269,7 @@ func (r *JSRenderer) render(buildResults *vugu.BuildResults) error {
 
 	// handle Rendered lifecycle callback
 	if r.lifecycleStateMap == nil {
-		r.lifecycleStateMap = make(map[interface{}]lifecycleState, len(bo.Components))
+		r.lifecycleStateMap = make(map[any]lifecycleState, len(bo.Components))
 	}
 	r.lifecyclePassNum++
 
@@ -457,7 +457,7 @@ func (r *JSRenderer) visitSyncNode(state *jsRenderState, bo *vugu.BuildOut, br *
 		for nchild := n.FirstChild; nchild != nil; nchild = nchild.NextSibling {
 
 			// use a different character here for the position to ensure it's unique
-			childPositionID := append(positionID, []byte(fmt.Sprintf("_t_%d", childIndex))...)
+			childPositionID := append(positionID, fmt.Appendf(nil, "_t_%d", childIndex)...)
 
 			err = r.visitSyncNode(state, bo, br, nchild, childPositionID)
 			if err != nil {
@@ -539,7 +539,7 @@ func (r *JSRenderer) visitSyncElementEtc(state *jsRenderState, bo *vugu.BuildOut
 		childIndex := 1
 		for nchild := n.FirstChild; nchild != nil; nchild = nchild.NextSibling {
 
-			childPositionID := append(positionID, []byte(fmt.Sprintf("_%d", childIndex))...)
+			childPositionID := append(positionID, fmt.Appendf(nil, "_%d", childIndex)...)
 
 			err = r.visitSyncNode(state, bo, br, nchild, childPositionID)
 			if err != nil {
@@ -635,7 +635,7 @@ func (r *JSRenderer) syncElement(state *jsRenderState, n *vugu.VGNode, positionI
 // 	return nil
 // }
 
-func (r *JSRenderer) handleCallback(this js.Value, args []js.Value) interface{} {
+func (r *JSRenderer) handleCallback(this js.Value, args []js.Value) any {
 	return r.jsRenderState.callbackManager.callback(this, args)
 }
 
@@ -656,10 +656,10 @@ func (r *JSRenderer) handleDOMEvent() {
 		Passive    bool   // `json:"passive"`
 
 		// the event object data as extracted above
-		EventSummary map[string]interface{} // `json:"event_summary"`
+		EventSummary map[string]any // `json:"event_summary"`
 	}
 
-	edm := make(map[string]interface{}, 6)
+	edm := make(map[string]any, 6)
 	// err := json.Unmarshal(b, &eventDetail)
 	err := vjson.Unmarshal(b, &edm)
 	if err != nil {
@@ -671,7 +671,7 @@ func (r *JSRenderer) handleDOMEvent() {
 	eventDetail.EventType, _ = edm["event_type"].(string)
 	eventDetail.Capture, _ = edm["capture"].(bool)
 	eventDetail.Passive, _ = edm["passive"].(bool)
-	eventDetail.EventSummary, _ = edm["event_summary"].(map[string]interface{})
+	eventDetail.EventSummary, _ = edm["event_summary"].(map[string]any)
 
 	domEvent := vugu.NewDOMEvent(r.eventEnv, eventDetail.EventSummary)
 
