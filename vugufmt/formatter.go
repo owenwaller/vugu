@@ -181,7 +181,7 @@ loop:
 
 			if breakCount := breaks(raws); breakCount > 0 {
 				// This is a break between tags.
-				for i := 0; i < breakCount; i++ {
+				for range breakCount {
 					_, err := out.Write([]byte{'\n'})
 					if err != nil {
 						return &FmtError{
@@ -303,7 +303,7 @@ func (f *Formatter) Diff(filename string, input io.Reader, output io.Writer) (bo
 	if err != nil {
 		return true, fmt.Errorf("computing diff: %s", err)
 	}
-	_, err = output.Write([]byte(fmt.Sprintf("diff -u %s %s\n", filepath.ToSlash(filename+".orig"), filepath.ToSlash(filename))))
+	_, err = output.Write(fmt.Appendf(nil, "diff -u %s %s\n", filepath.ToSlash(filename+".orig"), filepath.ToSlash(filename)))
 	if err != nil {
 		return false, err
 	}
