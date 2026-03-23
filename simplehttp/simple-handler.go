@@ -425,17 +425,17 @@ if (wasmSupported) {
 // PageHandler executes a Go template and responsds with the page.
 type PageHandler struct {
 	Template         *template.Template
-	TemplateDataFunc func(r *http.Request) interface{}
+	TemplateDataFunc func(r *http.Request) any
 }
 
 // DefaultStaticData is a map of static things added to the return value of DefaultTemplateDataFunc.
 // Provides a quick and dirty way to do things like add CSS files to every page.
-var DefaultStaticData = make(map[string]interface{}, 4)
+var DefaultStaticData = make(map[string]any, 4)
 
 // DefaultTemplateDataFunc is the default behavior for making template data.  It
 // returns a map with "Request" set to r and all elements of DefaultStaticData added to it.
-var DefaultTemplateDataFunc = func(r *http.Request) interface{} {
-	ret := map[string]interface{}{
+var DefaultTemplateDataFunc = func(r *http.Request) any {
+	ret := map[string]any{
 		"Request": r,
 	}
 	for k, v := range DefaultStaticData {
