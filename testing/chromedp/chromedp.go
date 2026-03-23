@@ -30,7 +30,7 @@ func MustChromeCtx() (context.Context, context.CancelFunc) {
 			panic(err)
 		}
 
-		var result map[string]interface{}
+		var result map[string]any
 
 		if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 			panic(err)
